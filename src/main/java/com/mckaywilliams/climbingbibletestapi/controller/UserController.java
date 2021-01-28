@@ -22,8 +22,12 @@ public class UserController {
 	
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<Object> register(@RequestBody User user){
-		return new ResponseEntity<Object>(service.createUser(user), HttpStatus.CREATED);
+	public ResponseEntity<Object> register(@RequestBody User user) throws Exception{
+		try {
+			return new ResponseEntity<Object>(service.createUser(user), HttpStatus.CREATED);
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST) 
@@ -35,12 +39,34 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping(value =  "/{id}/results")
+	@RequestMapping(value =  "/{id}/results", method = RequestMethod.GET)
 	public ResponseEntity<Object> showResults(@PathVariable Long id) {
 		try {
 			return new ResponseEntity<Object>(service.getResults(id), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<Object>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
+		try {
+			service.deleteUser(id);
+			return new ResponseEntity<Object>("Succefully deleted user: " + id, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	//update user
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> updateUser(@RequestBody User user, @PathVariable Long id){
+		try {
+			return new ResponseEntity<Object>(service.updateUser(user, id), HttpStatus.OK);
+			
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
 	

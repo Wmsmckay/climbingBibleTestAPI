@@ -13,7 +13,7 @@ import com.mckaywilliams.climbingbibletestapi.entity.Result;
 import com.mckaywilliams.climbingbibletestapi.service.ResultService;
 
 @RestController
-@RequestMapping("/users/{userid}/results")
+@RequestMapping("/users/{userId}/results")
 public class ResultsController {
 	
 	@Autowired
@@ -30,28 +30,43 @@ public class ResultsController {
 	
 	@RequestMapping(value="/{resultId}", method=RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteResult(@PathVariable Long resultId) {
-		resultService.deleteResult(resultId);
-		return new ResponseEntity<Object>("Deleted result with id: " + resultId, HttpStatus.OK);
+		try {
+			resultService.deleteResult(resultId);
+			return new ResponseEntity<Object>("Deleted result with id: " + resultId, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	
-	@RequestMapping(method=RequestMethod.GET)
+	@RequestMapping(value="/allresults",method=RequestMethod.GET)
 	public ResponseEntity<Object> getAllResults(){
-		return new ResponseEntity<Object>(resultService.getAllResults(), HttpStatus.OK);
+		try {
+			return new ResponseEntity<Object>(resultService.getAllResults(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	
 	@RequestMapping(value="/{resultId}", method=RequestMethod.GET)
 	public ResponseEntity<Object> getResult(@PathVariable Long resultId){
-		return new ResponseEntity<Object>(resultService.getResult(resultId), HttpStatus.OK);
+		try {	
+			return new ResponseEntity<Object>(resultService.getResult(resultId), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
 	}
 	
-	
-	
-	
-	//update method will go here
-	//
-	//
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> updateResult(@RequestBody Result result, @PathVariable Long id){
+		try {
+			return new ResponseEntity<Object>(resultService.updateResult(result, id), HttpStatus.OK);
+			
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
 	
 	
 }
